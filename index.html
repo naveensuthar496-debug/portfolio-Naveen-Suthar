@@ -1,0 +1,1193 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Naveen Suthar — Freelance Developer &amp; Interface Engineer</title>
+<meta name="description" content="Naveen Suthar — freelance developer building tailor-made digital interfaces and interactive websites. Based in India, working worldwide.">
+<meta name="theme-color" content="#1c1d20">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400..700&display=swap" rel="stylesheet">
+
+<style>
+/*══════════════════════════════════════════════════════════
+  TOKENS
+  ══════════════════════════════════════════ */
+:root{
+  /* palette */
+  --bg:#1c1d20;
+  --surface-lift:#24262b;      /* derived step of --bg, final CTA band */
+  --surface-sink:#17181a;      /* derived step of --bg, footer         */
+  --ink:#181818;
+  --text:#f5f5f5;              /* body / headings on dark              */
+  --muted:#787878;
+  --muted-cool:#90a8a8;
+  --line-dim:#484848;
+  --card:#455ce9;              /* card / surface colour                */
+  --accent:#c0c0c0;            /* CTAs, links, ONE highlight / viewport */
+  --hairline:rgba(255,255,255,.10);
+  --ghost-border:rgba(255,255,255,.25);
+
+  /* type */
+  --font:"Dennis Sans","Inter",system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  --h1:216px;
+  --h2:54px;
+  --body:17px;
+
+  /* rhythm — multiples of 8 */
+  --s1:8px;  --s2:16px; --s3:24px; --s4:32px;
+  --s6:48px; --s8:64px; --s12:96px;
+  --section-y:165px;
+  --maxw:1160px;
+
+  /* shape + motion */
+  --pill:999px;
+  --ease:cubic-bezier(.16,1,.3,1);
+  --dur:800ms;
+}
+
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:var(--font);
+  font-size:var(--body);
+  font-weight:400;
+  line-height:1.66;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+  overflow-x:hidden;
+}
+
+img{display:block;max-width:100%;height:auto}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
+
+::selection{background:var(--accent);color:var(--ink)}
+
+:focus-visible{
+  outline:2px solid var(--accent);
+  outline-offset:3px;
+  border-radius:var(--pill);
+}
+
+/* ── type scale ─────────────────────────────────────────── */
+h1,h2,h3{font-weight:450;line-height:1;letter-spacing:-.02em}
+
+.h1{
+  font-size:clamp(119px,15.5vw,var(--h1));
+  font-weight:450;
+  line-height:.92;
+  letter-spacing:-.045em;
+}
+
+.h2{
+  font-size:clamp(34px,5.2vw,var(--h2));
+  font-weight:450;
+  line-height:1.04;
+  letter-spacing:-.03em;
+}
+
+.eyebrow{
+  font-size:12px;
+  font-weight:500;
+  line-height:1;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+  color:var(--muted);
+}
+
+.lede{
+  font-size:var(--body);
+  line-height:1.66;
+  color:var(--muted-cool);
+  max-width:46ch;
+}
+
+/* ── layout ─────────────────────────────────────────────── */
+.shell{width:100%;max-width:var(--maxw);margin-inline:auto;padding-inline:var(--s3)}
+
+@media(min-width:768px){.shell{padding-inline:var(--s6)}}
+
+.section{padding-block:calc(var(--section-y) * .6)}
+
+@media(min-width:768px){.section{padding-block:var(--section-y)}}
+
+.rule{height:1px;background:var(--hairline);border:0}
+
+/* ── buttons (every button is a pill) ───────────────────── */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:var(--s1);
+  min-height:44px;
+  padding:12px 24px;
+  border-radius:var(--pill);
+  font-size:15px;font-weight:500;line-height:1;
+  white-space:nowrap;
+  transition:filter 150ms linear,background-color 150ms linear,
+            border-color 150ms linear,color 150ms linear,transform 150ms linear;
+}
+.btn-primary{background:var(--accent);color:#111111}
+.btn-primary:hover{filter:brightness(1.08)}
+.btn-primary:active{filter:brightness(.92)}
+
+.btn-ghost{background:transparent;color:var(--text);border:1px solid var(--ghost-border)}
+.btn-ghost:hover{border-color:var(--text)}
+
+/*══════════════════════════════════════════════════════════
+    1 — HEADER
+  ══════════════════════════════════════════ */
+.site-head{
+  position:fixed;inset:0 0 auto 0;z-index:80;
+  background:transparent;
+  border-bottom:1px solid transparent;
+  transition:background-color var(--dur) var(--ease),
+            border-color var(--dur) var(--ease);
+}
+.site-head.is-stuck{
+  background:var(--bg);
+  border-bottom-color:var(--hairline);
+}
+
+.head-inner{
+  display:flex;align-items:center;justify-content:space-between;gap:var(--s4);
+  height:88px;
+}
+
+.wordmark{
+  font-size:19px;font-weight:500;letter-spacing:-.02em;line-height:1;
+  display:inline-flex;align-items:center;gap:10px;
+}
+.wordmark .dot{
+  width:7px;height:7px;border-radius:var(--pill);
+  background:var(--card);flex:none;
+}
+
+.nav{display:none}
+
+@media(min-width:900px){
+  .nav{display:flex;align-items:center;gap:var(--s4)}
+}
+
+.nav a{
+  position:relative;
+  font-size:15px;font-weight:400;
+  padding:6px 2px;
+  color:var(--text);
+  transition:color 150ms linear;
+}
+.nav a::after{
+  content:"";position:absolute;left:0;bottom:0;
+  width:100%;height:1px;background:currentColor;
+  transform:scaleX(0);transform-origin:left;
+  transition:transform 600ms var(--ease);
+}
+.nav a:hover::after{transform:scaleX(1)}
+
+.head-cta{display:none}
+@media(min-width:900px){.head-cta{display:inline-flex}}
+
+/* burger */
+.burger{
+  display:inline-flex;flex-direction:column;justify-content:center;gap:5px;
+  width:44px;height:44px;padding:0 8px;
+  border-radius:var(--pill);
+}
+@media(min-width:900px){.burger{display:none}}
+.burger i{
+  display:block;height:1.5px;width:100%;
+  background:var(--text);border-radius:var(--pill);
+  transition:transform 600ms var(--ease),opacity 300ms linear;
+}
+.burger[aria-expanded="true"] i:nth-child(1){transform:translateY(6.5px) rotate(45deg)}
+.burger[aria-expanded="true"] i:nth-child(2){opacity:0}
+.burger[aria-expanded="true"] i:nth-child(3){transform:translateY(-6.5px) rotate(-45deg)}
+
+/* full-screen overlay menu */
+.overlay{
+  position:fixed;inset:0;z-index:70;
+  background:var(--bg);
+  display:flex;flex-direction:column;justify-content:center;
+  padding:120px var(--s3) var(--s8);
+  clip-path:inset(0 0 100% 0);
+  visibility:hidden;
+  transition:clip-path var(--dur) var(--ease),visibility 0s linear var(--dur);
+}
+.overlay.is-open{
+  clip-path:inset(0 0 0 0);
+  visibility:visible;
+  transition:clip-path var(--dur) var(--ease),visibility 0s linear 0s;
+}
+.overlay nav{display:flex;flex-direction:column;gap:var(--s2)}
+.overlay nav a{
+  font-size:clamp(44px,13vw,72px);
+  font-weight:450;line-height:1;letter-spacing:-.035em;
+  transition:color 300ms linear,transform 600ms var(--ease);
+}
+.overlay nav a:hover{color:var(--muted-cool)}
+.overlay .overlay-foot{margin-top:var(--s8);display:flex;flex-direction:column;gap:var(--s3)}
+.overlay .overlay-foot .btn{align-self:flex-start}
+
+body.menu-open{overflow:hidden}
+
+/*══════════════════════════════════════════════════════════
+    2 — HERO
+    ══════════════════════════════════════════════════════ */
+.hero{
+  min-height:100svh;
+  display:flex;flex-direction:column;justify-content:flex-end;
+  padding-top:140px;padding-bottom:var(--s8);
+  position:relative;overflow:hidden;
+}
+
+.hero-top{
+  display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;
+  gap:var(--s6);
+  margin-bottom:var(--s6);
+}
+.hero-avail{display:flex;align-items:center;gap:10px}
+.hero-avail .pulse{
+  width:8px;height:8px;border-radius:var(--pill);
+  background:var(--card);flex:none;
+  box-shadow:0 0 0 0 rgba(69,92,233,.55);
+  animation:pulse 2.6s var(--ease) infinite;
+}
+@keyframes pulse{
+  0%{box-shadow:0 0 0 0 rgba(69,92,233,.5)}
+  70%{box-shadow:0 0 0 12px rgba(69,92,233,0)}
+  100%{box-shadow:0 0 0 0 rgba(69,92,233,0)}
+}
+
+/* name + portrait composition — giant type gets the full measure,
+   portrait drops into the negative space beneath it */
+.hero-stage{display:flex;flex-direction:column;gap:var(--s6)}
+
+.hero-name{margin-bottom:0}
+.hero-name .line{display:block}
+.hero-name .line span{display:block}
+.hero-name .line-2{
+  display:flex;align-items:center;gap:var(--s4);
+}
+.hero-name .em{
+  flex:1 1 auto;height:6px;min-width:40px;
+  border-radius:var(--pill);
+  background:var(--line-dim);
+}
+
+.hero-lower{
+  display:grid;grid-template-columns:1fr;
+  gap:var(--s6);align-items:end;
+}
+@media(min-width:900px){
+  .hero-lower{grid-template-columns:minmax(0,1fr) 300px;gap:var(--s8)}
+}
+@media(min-width:1200px){
+  .hero-lower{grid-template-columns:minmax(0,1fr) 340px}
+}
+
+.hero-copy{
+  display:flex;flex-direction:column;gap:var(--s4);
+  max-width:52ch;
+}
+.hero-actions{display:flex;flex-wrap:wrap;gap:12px}
+
+/* portrait frame — full-body cutout stands on the blue card */
+.portrait{
+  position:relative;
+  width:100%;
+  max-width:320px;
+  aspect-ratio:3/4;
+  max-height:46svh;
+  border-radius:180px 180px 32px 32px;
+  overflow:hidden;
+  background:var(--card);
+  justify-self:start;
+}
+@media(min-width:900px){.portrait{justify-self:end}}
+
+.portrait img{
+  width:100%;height:100%;
+  object-fit:cover;object-position:50% 0%;
+  transform:scale(1.05);
+  transform-origin:50% 0%;
+  transition:transform 900ms var(--ease);
+  will-change:transform;
+}
+.portrait:hover img{transform:scale(1)}
+
+.portrait .badge{
+  position:absolute;left:16px;bottom:16px;
+  display:inline-flex;align-items:center;gap:8px;
+  padding:8px 16px;border-radius:var(--pill);
+  background:var(--bg);
+  font-size:12px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;
+  white-space:nowrap;
+}
+
+.hero-scroll{
+  display:flex;align-items:center;gap:10px;
+  margin-top:var(--s8);
+  color:var(--muted);
+  font-size:12px;letter-spacing:.08em;text-transform:uppercase;
+}
+.hero-scroll .arrow{
+  display:inline-block;
+  animation:nudge 3s var(--ease) infinite;
+}
+@keyframes nudge{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(5px)}
+}
+
+/*══════════════════════════════════════════════════════════
+    3 — SOCIAL PROOF
+  ══════════════════════════════════════════ */
+.proof{padding-block:var(--s12)}
+.proof .eyebrow{margin-bottom:var(--s6)}
+.proof-row{
+  display:flex;flex-wrap:wrap;align-items:center;
+  gap:var(--s6) var(--s8);
+}
+.proof-row span{
+  font-size:clamp(18px,2.2vw,24px);
+  font-weight:450;letter-spacing:-.02em;line-height:1;
+  color:rgba(255,255,255,.4);
+  transition:color 600ms var(--ease);
+}
+.proof-row span:hover{color:rgba(255,255,255,.85)}
+
+/*══════════════════════════════════════════════════════════
+    4 — WORK GRID
+  ══════════════════════════════════════════ */
+.sec-head{
+  display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;
+  gap:var(--s4);
+  margin-bottom:var(--s8);
+}
+.sec-head .h2{max-width:20ch}
+
+.work-grid{
+  display:grid;grid-template-columns:1fr;
+  gap:var(--s3);
+}
+@media(min-width:768px){
+  .work-grid{grid-template-columns:repeat(2,1fr);gap:var(--s4)}
+}
+
+.tile{
+  position:relative;display:block;
+  border-radius:32px;
+  overflow:hidden;
+  background:var(--card);
+  aspect-ratio:4/3;
+  isolation:isolate;
+}
+.tile-media{position:absolute;inset:0;overflow:hidden}
+.tile-media img{
+  width:100%;height:100%;object-fit:cover;
+  transform:scale(1.05);
+  transition:transform 900ms var(--ease),opacity 600ms var(--ease);
+  will-change:transform;
+}
+.tile:hover .tile-media img,
+.tile:focus-visible .tile-media img{transform:scale(1)}
+
+/* chrome disappears — meta fades in on hover */
+.tile-meta{
+  position:absolute;inset:auto 0 0 0;z-index:2;
+  display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;
+  gap:var(--s2);
+  padding:var(--s4);
+  background:linear-gradient(to top,rgba(28,29,32,.92),rgba(28,29,32,0));
+  opacity:0;transform:translateY(12px);
+  transition:opacity 600ms var(--ease),transform 600ms var(--ease);
+}
+.tile:hover .tile-meta,
+.tile:focus-visible .tile-meta{opacity:1;transform:translateY(0)}
+.tile-meta h3{font-size:24px;font-weight:450;letter-spacing:-.02em}
+.tile-meta p{font-size:14px;line-height:1.4;color:var(--muted-cool)}
+
+.tile-idx{
+  position:absolute;top:var(--s4);left:var(--s4);z-index:2;
+  font-size:12px;letter-spacing:.08em;text-transform:uppercase;
+  color:rgba(255,255,255,.7);
+  opacity:0;transition:opacity 600ms var(--ease);
+}
+.tile:hover .tile-idx,
+.tile:focus-visible .tile-idx{opacity:1}
+
+/*══════════════════════════════════════════════════════════
+    5 — CAPABILITIES
+  ══════════════════════════════════════════ */
+.caps{list-style:none;border-top:1px solid var(--hairline)}
+.caps li{border-bottom:1px solid var(--hairline)}
+.caps a{
+  display:flex;align-items:baseline;justify-content:space-between;gap:var(--s4);
+  padding-block:var(--s4);
+  font-size:clamp(28px,5vw,var(--h2));
+  font-weight:450;line-height:1.1;letter-spacing:-.03em;
+  color:var(--text);
+  transition:color 600ms var(--ease),padding-inline 600ms var(--ease);
+}
+.caps a:hover{color:var(--muted-cool);padding-inline:var(--s3)}
+.caps a .n{
+  font-size:12px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--muted);flex:none;
+}
+
+/*══════════════════════════════════════════════════════════
+  6 — FEATURE ROWS
+  ══════════════════════════════════════════
+  gap:var(--s6);align-items:center;
+}
+@media(min-width:768px){
+  .row{grid-template-columns:repeat(2,1fr);gap:var(--s12)}
+  .row.flip .row-text{order:2}
+  .row.flip .row-visual{order:1}
+}
+
+.row-text{display:flex;flex-direction:column;gap:var(--s3);max-width:44ch}
+.row-text p{color:var(--muted-cool)}
+
+.row-visual{display:flex;justify-content:center}
+
+/* circular card surface — radius 50%, no shadow, padding 0 */
+.disc{
+  position:relative;
+  width:100%;max-width:400px;aspect-ratio:1;
+  border-radius:50%;
+  background:var(--card);
+  overflow:hidden;
+  display:grid;place-items:center;
+}
+.disc img{
+  width:100%;height:100%;object-fit:cover;object-position:50% 2%;
+  transform:scale(1.05);
+  transform-origin:50% 0%;
+  transition:transform 900ms var(--ease);
+}
+.disc:hover img{transform:scale(1)}
+
+.disc-type{
+  font-size:clamp(40px,7vw,64px);
+  font-weight:450;letter-spacing:-.04em;line-height:1;
+  color:var(--text);text-align:center;padding:var(--s4);
+}
+.disc-type small{
+  display:block;
+  font-size:12px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;
+  color:rgba(255,255,255,.7);
+  margin-top:var(--s2);
+}
+
+/*══════════════════════════════════════════════════════════
+  7 — FINAL CTA
+  ══════════════════════════════════════════════════════════ */
+.cta{background:var(--surface-lift)}
+.cta-inner{
+  display:grid;grid-template-columns:1fr;gap:var(--s8);align-items:start;
+}
+@media(min-width:900px){
+  .cta-inner{grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:var(--s12)}
+}
+.cta-copy{
+  display:flex;flex-direction:column;align-items:flex-start;gap:var(--s4);
+  max-width:24ch;
+}
+.cta .reassure{
+  font-size:13px;letter-spacing:.02em;color:var(--muted);
+}
+.cta-mail{
+  color:var(--accent);
+  text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:4px;
+  transition:opacity 150ms linear;
+}
+.cta-mail:hover{opacity:.75}
+
+/* ── enquiry form ───────────────────────────────────────── */
+.form{display:flex;flex-direction:column;gap:var(--s3)}
+.form-row{display:grid;grid-template-columns:1fr;gap:var(--s3)}
+@media(min-width:560px){.form-row{grid-template-columns:1fr 1fr}}
+
+.field{display:flex;flex-direction:column;gap:var(--s1);min-width:0}
+.field > label{
+  font-size:12px;font-weight:500;line-height:1;
+  text-transform:uppercase;letter-spacing:.08em;color:var(--muted);
+}
+.field input,
+.field select,
+.field textarea{
+  font:inherit;font-size:15px;line-height:1.5;
+  width:100%;min-height:48px;padding:14px 20px;
+  color:var(--text);background:transparent;
+  border:1px solid var(--ghost-border);border-radius:var(--pill);
+  transition:border-color 150ms linear,color 150ms linear;
+}
+.field textarea{border-radius:24px;min-height:128px;resize:vertical}
+.field input::placeholder,
+.field textarea::placeholder{color:var(--muted)}
+.field input:hover,
+.field select:hover,
+.field textarea:hover{border-color:var(--muted)}
+.field input:focus,
+.field select:focus,
+.field textarea:focus{outline:none;border-color:var(--text)}
+
+.field select{
+  appearance:none;-webkit-appearance:none;cursor:pointer;
+  padding-right:48px;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8' fill='none'%3E%3Cpath d='M1 1.5 6 6.5l5-5' stroke='%23787878' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 20px center;
+}
+.field select option{background:var(--bg);color:var(--text)}
+
+/* invalid state — border + message, no colour outside the palette */
+.field.is-invalid input,
+.field.is-invalid select,
+.field.is-invalid textarea{border-color:var(--accent)}
+.field .err{
+  font-size:12px;line-height:1.4;letter-spacing:.02em;color:var(--accent);
+  min-height:0;
+}
+.field .err:empty{display:none}
+
+/* honeypot — off-screen, never display:none (bots skip hidden fields) */
+.trap{
+  position:absolute;width:1px;height:1px;padding:0;margin:-1px;
+  overflow:hidden;clip-path:inset(50%);white-space:nowrap;border:0;
+}
+
+.form-foot{display:flex;flex-wrap:wrap;align-items:center;gap:var(--s3);margin-top:var(--s1)}
+.form .btn[disabled]{opacity:.55;cursor:not-allowed;filter:none}
+
+.form-note{
+  font-size:13px;line-height:1.5;letter-spacing:.02em;
+  color:var(--muted);margin:0;
+}
+.form-note[data-state="ok"]{color:var(--text)}
+.form-note[data-state="error"]{color:var(--accent)}
+
+/* spinner on the submit button while posting */
+.btn .spin{
+  width:14px;height:14px;flex:0 0 auto;
+  border:2px solid rgba(17,17,17,.28);border-top-color:#111111;
+  border-radius:var(--pill);
+  animation:spin 700ms linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* success panel replaces the form once sent */
+.form-done{
+  display:flex;flex-direction:column;align-items:flex-start;gap:var(--s2);
+  padding:var(--s4);
+  border:1px solid var(--hairline);border-radius:24px;
+}
+.form-done h3{font-size:22px;font-weight:450;line-height:1.2;letter-spacing:-.02em}
+.form-done p{font-size:15px;line-height:1.66;color:var(--muted-cool);max-width:38ch}
+.form-done .ref{
+  font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);
+}
+[hidden]{display:none !important}
+
+/*══════════════════════════════════════════════════════════
+  8 — FOOTER
+  ══════════════════════════════════════════════════════════ */
+.site-foot{background:var(--surface-sink);padding-block:var(--s12) var(--s6)}
+.foot-grid{
+  display:grid;grid-template-columns:1fr;gap:var(--s8);
+  padding-bottom:var(--s8);
+}
+@media(min-width:768px){
+  .foot-grid{grid-template-columns:1.4fr repeat(2,1fr);gap:var(--s6)}
+}
+.foot-col h4{
+  font-size:12px;font-weight:500;line-height:1;
+  text-transform:uppercase;letter-spacing:.08em;color:var(--muted);
+  margin-bottom:var(--s3);
+}
+.foot-col ul{list-style:none;display:flex;flex-direction:column;gap:12px}
+.foot-col a{
+  font-size:15px;
+  display:inline-flex;align-items:center;min-height:24px;
+  transition:color 300ms linear;
+}
+.foot-col a:hover{color:var(--muted-cool)}
+.foot-blurb{color:var(--muted-cool);max-width:34ch;margin-top:var(--s3)}
+
+.foot-legal{
+  display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;
+  gap:var(--s2);
+  padding-top:var(--s4);
+  border-top:1px solid var(--hairline);
+  font-size:12px;color:var(--muted);
+}
+
+/*══════════════════════════════════════════════════════════
+  MOTION — reveal on enter
+  ══════════════════════════════════════════════════════════ */
+.reveal{
+  opacity:0;transform:translateY(24px);
+  transition:opacity var(--dur) var(--ease),transform var(--dur) var(--ease);
+}
+.reveal.in{opacity:1;transform:none}
+
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{
+    animation-duration:.01ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:.01ms !important;
+  }
+  .reveal{opacity:1;transform:none}
+  .portrait img,.tile-media img,.disc img{transform:none}
+  .tile-meta,.tile-idx{opacity:1;transform:none}
+  .overlay{transition:none}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════ 1 · HEADER ═══════════ -->
+<header class="site-head" id="head">
+  <div class="shell head-inner">
+    <a href="#top" class="wordmark" aria-label="Naveen Suthar — home">
+      <span class="dot" aria-hidden="true"></span>Naveen&nbsp;Suthar
+    </a>
+
+    <nav class="nav" aria-label="Primary">
+      <a href="#work">Work</a>
+      <a href="#about">About</a>
+      <a href="#contact">Contact</a>
+    </nav>
+
+    <a href="#contact" class="btn btn-primary head-cta" data-magnetic>Start a project</a>
+
+    <button class="burger" id="burger" aria-expanded="false" aria-controls="overlay" aria-label="Open menu">
+      <i aria-hidden="true"></i><i aria-hidden="true"></i><i aria-hidden="true"></i>
+    </button>
+  </div>
+</header>
+
+<!-- mobile overlay menu -->
+<div class="overlay" id="overlay">
+  <nav aria-label="Mobile">
+    <a href="#work">Work</a>
+    <a href="#about">About</a>
+    <a href="#contact">Contact</a>
+  </nav>
+  <div class="overlay-foot">
+    <p class="eyebrow">Available for new work</p>
+    <a href="#contact" class="btn btn-primary">Start a project</a>
+  </div>
+</div>
+
+<main id="top">
+
+  <!-- ═══════════ 2 · HERO ═══════════ -->
+  <section class="hero" aria-labelledby="hero-title">
+    <div class="shell">
+
+      <div class="hero-top">
+        <p class="eyebrow hero-avail">
+          <span class="pulse" aria-hidden="true"></span>Available for select work — 2026
+        </p>
+        <p class="eyebrow">Jodhpur, India · Working worldwide</p>
+      </div>
+
+      <div class="hero-stage">
+        <h1 class="h1 hero-name" id="hero-title">
+          <span class="line"><span>Naveen</span></span>
+          <span class="line line-2"><span>Suthar</span><span class="em" aria-hidden="true"></span></span>
+        </h1>
+
+        <div class="hero-lower">
+          <div class="hero-copy">
+            <p class="lede">
+              Freelance developer building tailor-made interfaces and interactive
+              websites for brands that care about the details.
+            </p>
+            <div class="hero-actions">
+              <a href="#work" class="btn btn-primary" data-magnetic>View selected work</a>
+              <a href="#contact" class="btn btn-ghost">Get in touch</a>
+            </div>
+          </div>
+
+          <figure class="portrait" id="portrait">
+            <img src="assets/naveen.webp" alt="Portrait of Naveen Suthar, freelance developer, wearing a light grey suit." width="1024" height="1536" fetchpriority="high" decoding="async">
+            <figcaption class="badge">Naveen · Developer</figcaption>
+          </figure>
+        </div>
+      </div>
+
+      <p class="hero-scroll"><span class="arrow" aria-hidden="true">↓</span> Scroll to explore</p>
+    </div>
+  </section>
+
+  <!-- ═══════════ 3 · SOCIAL PROOF ═══════════ -->
+  <section class="proof shell" aria-label="Clients and partners">
+    <p class="eyebrow reveal">Trusted by teams at</p>
+    <div class="proof-row reveal">
+      <span>Northbound</span>
+      <span>Aurora&nbsp;Commerce</span>
+      <span>Meridian</span>
+      <span>Fielded</span>
+      <span>Studio&nbsp;Halo</span>
+      <span>Lumen&nbsp;Labs</span>
+    </div>
+  </section>
+
+  <hr class="rule">
+
+  <!-- ═══════════ 4 · WORK ═══════════ -->
+  <section class="section" id="work" aria-labelledby="work-title">
+    <div class="shell">
+      <div class="sec-head reveal">
+        <h2 class="h2" id="work-title">Selected work</h2>
+        <p class="eyebrow">Four of twelve · 2024—2026</p>
+      </div>
+
+      <div class="work-grid">
+
+        <a class="tile reveal" href="#contact" aria-label="Aurora Commerce — storefront rebuild, 38 percent lift in conversion">
+          <span class="tile-media">
+            <img src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=1200&q=70"
+                alt="Dark workspace with a laptop displaying a storefront interface." loading="lazy" decoding="async">
+          </span>
+          <span class="tile-idx" aria-hidden="true">01</span>
+          <span class="tile-meta">
+            <h3>Aurora Commerce</h3>
+            <p>Storefront rebuild — 38% lift in conversion</p>
+          </span>
+        </a>
+
+        <a class="tile reveal" href="#contact" aria-label="Northbound Studio — brand site, Awwwards honourable mention">
+          <span class="tile-media">
+            <img src="https://images.unsplash.com/photo-1499951360447-b19be8fe80f5?auto=format&fit=crop&w=1200&q=70"
+                alt="Moody monochrome desk scene with design tools." loading="lazy" decoding="async">
+          </span>
+          <span class="tile-idx" aria-hidden="true">02</span>
+          <span class="tile-meta">
+            <h3>Northbound Studio</h3>
+            <p>Brand site — Awwwards honourable mention</p>
+          </span>
+        </a>
+
+        <a class="tile reveal" href="#contact" aria-label="Fielded — dashboard for field teams, 1.2 second load">
+          <span class="tile-media">
+            <img src="https://images.unsplash.com/photo-1551650975-87deedd944c3?auto=format&fit=crop&w=1200&q=70"
+                alt="Interface design mockups on a dark screen." loading="lazy" decoding="async">
+          </span>
+          <span class="tile-idx" aria-hidden="true">03</span>
+          <span class="tile-meta">
+            <h3>Fielded</h3>
+            <p>Dashboard for field teams — 1.2s median load</p>
+          </span>
+        </a>
+
+        <a class="tile reveal" href="#contact" aria-label="Meridian Finance — design system across nine products">
+          <span class="tile-media">
+            <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?auto=format&fit=crop&w=1200&q=70"
+                alt="Abstract dark blue light trails." loading="lazy" decoding="async">
+          </span>
+          <span class="tile-idx" aria-hidden="true">04</span>
+          <span class="tile-meta">
+            <h3>Meridian Finance</h3>
+            <p>Design system shipped across nine products</p>
+          </span>
+        </a>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════ 5 · CAPABILITIES ═══════════ -->
+  <section class="section" aria-labelledby="caps-title">
+    <div class="shell">
+      <div class="sec-head reveal">
+        <h2 class="h2" id="caps-title">What I do</h2>
+        <p class="eyebrow">Capabilities</p>
+      </div>
+
+      <ul class="caps reveal">
+        <li><a href="#contact">Interface engineering <span class="n">01</span></a></li>
+        <li><a href="#contact">Interaction &amp; motion <span class="n">02</span></a></li>
+        <li><a href="#contact">Design systems <span class="n">03</span></a></li>
+        <li><a href="#contact">Performance &amp; accessibility <span class="n">04</span></a></li>
+        <li><a href="#contact">Creative direction <span class="n">05</span></a></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ═══════════ 6 · FEATURE ROWS ═══════════ -->
+  <section class="section" id="about" aria-labelledby="about-title">
+    <div class="shell">
+      <h2 class="h2 reveal" id="about-title" style="max-width:22ch;margin-bottom:var(--s12)">
+        Helping brands thrive in the digital world.
+      </h2>
+
+      <div class="rows">
+
+        <article class="row reveal">
+          <div class="row-text">
+            <p class="eyebrow">Approach</p>
+            <h3 class="h2">Design that behaves like a product.</h3>
+            <p>Every interaction is drawn, then built. Nothing ships until it feels
+              inevitable on a phone in one hand.</p>
+          </div>
+          <div class="row-visual">
+            <div class="disc">
+              <img src="assets/naveen.webp" alt="Naveen Suthar at work." width="1024" height="1536" loading="lazy" decoding="async">
+            </div>
+          </div>
+        </article>
+
+        <article class="row flip reveal">
+          <div class="row-text">
+            <p class="eyebrow">Engineering</p>
+            <h3 class="h2">Fast by default, everywhere.</h3>
+            <p>Semantic markup, no framework bloat, real budgets for weight and
+              paint. Speed is a design decision.</p>
+          </div>
+          <div class="row-visual">
+            <div class="disc">
+              <p class="disc-type">98<small>Median Lighthouse</small></p>
+            </div>
+          </div>
+        </article>
+
+        <article class="row reveal">
+          <div class="row-text">
+            <p class="eyebrow">Collaboration</p>
+            <h3 class="h2">One partner, sketch to launch.</h3>
+            <p>You work with me directly — no handoffs, no account layer.
+              Weekly builds you can click through.</p>
+          </div>
+          <div class="row-visual">
+            <div class="disc">
+              <p class="disc-type">12<small>Sites shipped</small></p>
+            </div>
+          </div>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════ 7 · FINAL CTA ═══════════ -->
+  <section class="section cta" id="contact" aria-labelledby="cta-title">
+    <div class="shell cta-inner reveal">
+
+      <div class="cta-copy">
+        <p class="eyebrow">Let's talk</p>
+        <h2 class="h2" id="cta-title">Have an idea worth building well?</h2>
+        <p class="reassure">
+          Free 30-minute call · No obligation ·
+          <a class="cta-mail" href="mailto:naveensuthar496@gmail.com">naveensuthar496@gmail.com</a>
+        </p>
+      </div>
+
+      <form class="form" id="enquiry-form" method="post" action="/api/contact" novalidate>
+        <div class="form-row">
+          <p class="field">
+            <label for="f-name">Your name</label>
+            <input id="f-name" name="name" type="text" autocomplete="name"
+                  maxlength="120" required placeholder="Naveen Suthar">
+            <span class="err" id="e-name" aria-live="polite"></span>
+          </p>
+          <p class="field">
+            <label for="f-email">Email</label>
+            <input id="f-email" name="email" type="email" autocomplete="email"
+                  maxlength="254" required placeholder="you@company.com">
+            <span class="err" id="e-email" aria-live="polite"></span>
+          </p>
+        </div>
+
+        <div class="form-row">
+          <p class="field">
+            <label for="f-company">Company <span aria-hidden="true">(optional)</span></label>
+            <input id="f-company" name="company" type="text" autocomplete="organization"
+                  maxlength="160" placeholder="Studio or team">
+          </p>
+          <p class="field">
+            <label for="f-budget">Budget <span aria-hidden="true">(optional)</span></label>
+            <select id="f-budget" name="budget">
+              <option value="">Choose a range</option>
+              <option value="Under 50k">Under ₹50k</option>
+              <option value="50k - 2L">₹50k – ₹2L</option>
+              <option value="2L - 5L">₹2L – ₹5L</option>
+              <option value="5L+">₹5L+</option>
+              <option value="Not sure yet">Not sure yet</option>
+            </select>
+          </p>
+        </div>
+
+        <p class="field">
+          <label for="f-message">What are you building?</label>
+          <textarea id="f-message" name="message" rows="5" maxlength="5000" required
+                    placeholder="A sentence or two about the project, the timeline, and what success looks like."></textarea>
+          <span class="err" id="e-message" aria-live="polite"></span>
+        </p>
+
+        <!-- bot trap: a real visitor never sees or fills this -->
+        <p class="trap" aria-hidden="true">
+          <label for="f-website">Website</label>
+          <input id="f-website" name="website" type="text" tabindex="-1" autocomplete="off">
+        </p>
+
+        <div class="form-foot">
+          <button type="submit" class="btn btn-primary" data-magnetic>
+            <span class="btn-label">Start a project</span>
+          </button>
+          <p class="form-note" id="form-note" role="status" aria-live="polite">
+            Replies within one business day.
+          </p>
+        </div>
+      </form>
+
+      <div class="form-done" id="form-done" hidden>
+        <h3>Message received.</h3>
+        <p>Thanks — it's stored and on its way to my inbox. I'll reply within one business day, and you should have a confirmation email already.</p>
+        <p class="ref" id="form-ref"></p>
+      </div>
+
+    </div>
+  </section>
+
+</main>
+
+<!-- ═══════════ 8 · FOOTER ═══════════ -->
+<footer class="site-foot">
+  <div class="shell">
+    <div class="foot-grid">
+      <div class="foot-col">
+        <a href="#top" class="wordmark"><span class="dot" aria-hidden="true"></span>Naveen&nbsp;Suthar</a>
+        <p class="foot-blurb">Freelance developer delivering tailor-made digital
+          designs and interactive websites from Jodhpur, India.</p>
+      </div>
+
+      <div class="foot-col">
+        <h4>Menu</h4>
+        <ul>
+          <li><a href="#work">Work</a></li>
+          <li><a href="#about">About</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </div>
+
+      <div class="foot-col">
+        <h4>Elsewhere</h4>
+        <ul>
+          <li><a href="https://github.com/naveensuthar496-debug" target="_blank" rel="noopener noreferrer">GitHub</a></li>
+          <li><a href="mailto:naveensuthar496@gmail.com">Email</a></li>
+          <li><a href="#top">Back to top</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="foot-legal">
+      <p>© 2026 Naveen Suthar. All rights reserved.</p>
+      <p>Built by hand — Jodhpur, IN</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+  /* ── header background after 40px ─────────────────────── */
+  var head = document.getElementById("head");
+  function onScroll(){
+    head.classList.toggle("is-stuck", window.scrollY > 40);
+  }
+  onScroll();
+  window.addEventListener("scroll", onScroll, {passive:true});
+
+  /* ── overlay menu ─────────────────────────────────────── */
+  var burger  = document.getElementById("burger");
+  var overlay = document.getElementById("overlay");
+
+  function setMenu(open){
+    burger.setAttribute("aria-expanded", String(open));
+    burger.setAttribute("aria-label", open ? "Close menu" : "Open menu");
+    overlay.classList.toggle("is-open", open);
+    document.body.classList.toggle("menu-open", open);
+  }
+  burger.addEventListener("click", function(){
+    setMenu(burger.getAttribute("aria-expanded") !== "true");
+  });
+  overlay.addEventListener("click", function(e){
+    if (e.target.closest("a")) setMenu(false);
+  });
+  document.addEventListener("keydown", function(e){
+    if (e.key === "Escape" && overlay.classList.contains("is-open")){
+      setMenu(false);
+      burger.focus();
+    }
+  });
+
+  /* ── reveal on enter ──────────────────────────────────── */
+  var targets = document.querySelectorAll(".reveal");
+  if (!("IntersectionObserver" in window) || reduce.matches){
+    targets.forEach(function(el){ el.classList.add("in"); });
+  } else {
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        if (en.isIntersecting){
+          en.target.classList.add("in");
+          io.unobserve(en.target);
+        }
+      });
+    }, {rootMargin:"0px 0px -12% 0px", threshold:0.12});
+    targets.forEach(function(el){ io.observe(el); });
+  }
+
+  /* ── hero parallax (±20px) ────────────────────────────── */
+  var portrait = document.getElementById("portrait");
+  if (portrait && !reduce.matches){
+    var ticking = false;
+    window.addEventListener("scroll", function(){
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(function(){
+        var y = window.scrollY;
+        if (y < window.innerHeight * 1.2){
+          var shift = Math.max(-20, Math.min(20, (y / window.innerHeight) * 40 - 20));
+          portrait.style.transform = "translate3d(0," + shift.toFixed(2) + "px,0)";
+        }
+        ticking = false;
+      });
+    }, {passive:true});
+  }
+
+  /* ── magnetic buttons ─────────────────────────────────── */
+  if (!reduce.matches && window.matchMedia("(pointer: fine)").matches){
+    document.querySelectorAll("[data-magnetic]").forEach(function(el){
+      el.addEventListener("mousemove", function(e){
+        var r = el.getBoundingClientRect();
+        var mx = e.clientX - r.left - r.width / 2;
+        var my = e.clientY - r.top - r.height / 2;
+        el.style.transform = "translate(" + (mx*0.18).toFixed(2) + "px," + (my*0.28).toFixed(2) + "px)";
+      });
+      el.addEventListener("mouseleave", function(){
+        el.style.transition = "transform 600ms cubic-bezier(.16,1,.3,1)";
+        el.style.transform  = "translate(0,0)";
+        setTimeout(function(){ el.style.transition = ""; }, 600);
+      });
+    });
+  }
+
+  /* ── enquiry form → POST /api/contact ─────────────────── */
+  var form = document.getElementById("enquiry-form");
+  if (form){
+    var note   = document.getElementById("form-note");
+    var done   = document.getElementById("form-done");
+    var refEl  = document.getElementById("form-ref");
+    var submit = form.querySelector('button[type="submit"]');
+    var label  = submit.querySelector(".btn-label");
+    var loadedAt = Date.now();          // for the timing / bot check
+    var sending  = false;
+
+    var FIELDS = ["name", "email", "message"];   // fields with inline error slots
+
+    function setNote(text, state){
+      note.textContent = text;
+      if (state) note.setAttribute("data-state", state);
+      else note.removeAttribute("data-state");
+    }
+    function clearErrors(){
+      FIELDS.forEach(function(f){
+        var slot = document.getElementById("e-" + f);
+        if (slot) slot.textContent = "";
+        var field = form.querySelector('[name="' + f + '"]');
+        if (field) field.closest(".field").classList.remove("is-invalid");
+      });
+    }
+    function showErrors(errors){
+      var first = null;
+      Object.keys(errors).forEach(function(f){
+        var slot = document.getElementById("e-" + f);
+        if (slot) slot.textContent = errors[f];
+        var field = form.querySelector('[name="' + f + '"]');
+        if (field){
+          field.closest(".field").classList.add("is-invalid");
+          if (!first) first = field;
+        }
+      });
+      if (first) first.focus();
+    }
+    function busy(on){
+      sending = on;
+      submit.disabled = on;
+      if (on){
+        label.textContent = "Sending";
+        if (!submit.querySelector(".spin")){
+          var s = document.createElement("span");
+          s.className = "spin"; s.setAttribute("aria-hidden", "true");
+          submit.appendChild(s);
+        }
+      } else {
+        label.textContent = "Start a project";
+        var sp = submit.querySelector(".spin");
+        if (sp) sp.remove();
+      }
+    }
+
+    form.addEventListener("submit", function(e){
+      e.preventDefault();
+      if (sending) return;
+      clearErrors();
+      setNote("Sending your message…");
+      busy(true);
+
+      var payload = {
+        name:    form.name.value,
+        email:   form.email.value,
+        company: form.company.value,
+        budget:  form.budget.value,
+        message: form.message.value,
+        website: form.website.value,             // honeypot
+        elapsed: Date.now() - loadedAt
+      };
+
+      fetch(form.action, {
+        method: "POST",
+        headers: {"Content-Type": "application/json", "Accept": "application/json"},
+        body: JSON.stringify(payload)
+      })
+      .then(function(res){
+        return res.json().catch(function(){ return {}; }).then(function(data){
+          return {status: res.status, data: data};
+        });
+      })
+      .then(function(r){
+        busy(false);
+        if (r.status >= 200 && r.status < 300 && r.data.ok){
+          form.hidden = true;
+          done.hidden = false;
+          if (r.data.reference) refEl.textContent = "Reference · " + r.data.reference;
+          done.scrollIntoView({behavior: reduce.matches ? "auto" : "smooth", block: "center"});
+          return;
+        }
+        if (r.status === 422 && r.data.errors){
+          showErrors(r.data.errors);
+          setNote(r.data.error || "Please check the highlighted fields.", "error");
+          return;
+        }
+        setNote(r.data.error || "Something went wrong. Please email me directly at naveensuthar496@gmail.com.", "error");
+      })
+      .catch(function(){
+        busy(false);
+        setNote("Couldn't reach the server. Please email me directly at naveensuthar496@gmail.com.", "error");
+      });
+    });
+  }
+})();
+</script>
+</body>
+</html>

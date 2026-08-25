@@ -1,0 +1,21 @@
+# ── secrets ─────────────────────────────────────────────
+# never commit real credentials
+.env
+.env.*
+!.env.example
+
+# ── dependencies / build ────────────────────────────────
+node_modules/
+npm-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# ── runtime ─────────────────────────────────────────────
+logs/
+*.log
+.DS_Store
+Thumbs.db
+
+# ── local tooling ───────────────────────────────────────
+.skill-extract/
+*.zip
