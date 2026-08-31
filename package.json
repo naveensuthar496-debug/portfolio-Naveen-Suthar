@@ -10,7 +10,14 @@
     "dev": "node --watch server/index.js",
     "check:mail": "node server/scripts/test-mail.js",
     "check:db": "node server/scripts/test-db.js",
-    "list": "node server/scripts/list-enquiries.js"
+    "list": "node server/scripts/list-enquiries.js",
+    "gen:certs": "node server/scripts/generate-certs.js",
+    "build": "npm run gen:certs",
+    "build:docker": "docker build -t portfolio-app:latest .",
+    "build:package": "npm run build && npm run build:docker",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "docker:logs": "docker-compose logs -f app"
   },
   "engines": {
     "node": ">=18"
@@ -20,6 +27,7 @@
     "express": "^4.21.2",
     "express-rate-limit": "^7.4.1",
     "mongoose": "^8.9.5",
+    "mssql": "^11.0.1",
     "nodemailer": "^6.9.16"
   }
 }

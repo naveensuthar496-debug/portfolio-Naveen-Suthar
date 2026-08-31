@@ -1,72 +1,74 @@
 /**
- * MongoDB connection.
+ * Database abstraction layer.
+ * Supports both MongoDB (via Mongoose) and Azure SQL Database (via mssql).
  *
- * Works unchanged against MongoDB Atlas or a local mongod — only the
- * MONGODB_URI in .env differs. The app degrades gracefully: if the
- * database is unreachable the enquiry route still runs and falls back
- * to an append-only file so a lead is never lost.
+ * Configuration via environment variables:
+ *   DATABASE_TYPE=mongodb|mssql (default: mongodb)
+ *   For MongoDB: MONGODB_URI
+ *   For Azure SQL: AZURE_SQL_SERVER, AZURE_SQL_DATABASE, AZURE_SQL_USER, AZURE_SQL_PASSWORD
  */
-import mongoose from "mongoose";
 import { config, dbConfigured } from "./config.js";
 
-let connecting = null;
+let dbAdapter = null;
 let ready = false;
 
-mongoose.set("strictQuery", true);
-
-export const isReady = () => ready && mongoose.connection.readyState === 1;
+export const isReady = () => ready;
 
 /**
- * Connect once; concurrent callers share the same promise.
- * Resolves to `true` on success, `false` if unconfigured/unreachable.
+ * Get the appropriate database adapter based on configuration
+ */
+async function getAdapter() {
+  if (dbAdapter) return dbAdapter;
+
+  const dbType = process.env.DATABASE_TYPE || "mongodb";
+
+  if (dbType === "mssql") {
+    const { AzureSQLAdapter } = await import("./adapters/azure-sql.js");
+    dbAdapter = new AzureSQLAdapter(config);
+  } else {
+    const { MongoDBAdapter } = await import("./adapters/mongodb.js");
+    dbAdapter = new MongoDBAdapter(config);
+  }
+
+  return dbAdapter;
+}
+
+/**
+ * Connect to the database
  */
 export async function connectDB() {
   if (!dbConfigured()) {
-    console.warn("[db] MONGODB_URI is not set — enquiries will be stored in the fallback file only.");
+    console.warn("[db] Database is not configured — enquiries will be stored in fallback file only.");
     return false;
   }
-  if (isReady()) return true;
-  if (connecting) return connecting;
 
-  connecting = mongoose
-    .connect(config.mongoUri, {
-      dbName: config.dbName,
-      serverSelectionTimeoutMS: 8000,
-      socketTimeoutMS: 45_000,
-      maxPoolSize: 10,
-    })
-    .then(() => {
-      ready = true;
-      const { host, name } = mongoose.connection;
-      console.log(`[db] connected → ${host}/${name}`);
-      return true;
-    })
-    .catch((err) => {
-      ready = false;
-      console.error(`[db] connection failed: ${err.message}`);
-      return false;
-    })
-    .finally(() => {
-      connecting = null;
-    });
-
-  return connecting;
+  try {
+    const adapter = await getAdapter();
+    const success = await adapter.connect();
+    ready = success;
+    return success;
+  } catch (err) {
+    console.error(`[db] connection failed: ${err.message}`);
+    ready = false;
+    return false;
+  }
 }
 
-mongoose.connection.on("disconnected", () => {
-  ready = false;
-  console.warn("[db] disconnected");
-});
-mongoose.connection.on("reconnected", () => {
-  ready = true;
-  console.log("[db] reconnected");
-});
-
+/**
+ * Close database connection
+ */
 export async function closeDB() {
-  if (mongoose.connection.readyState !== 0) {
-    await mongoose.connection.close();
+  if (dbAdapter) {
+    await dbAdapter.disconnect();
     ready = false;
   }
 }
 
-export default { connectDB, closeDB, isReady };
+/**
+ * Get database adapter for model operations
+ */
+export async function getDatabase() {
+  return getAdapter();
+}
+
+export default { connectDB, closeDB, isReady, getDatabase };

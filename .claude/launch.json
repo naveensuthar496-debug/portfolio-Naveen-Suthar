@@ -6,6 +6,12 @@
       "runtimeExecutable": "npx",
       "runtimeArgs": ["-y", "http-server", ".", "-p", "5177", "-c-1"],
       "port": 5177
+    },
+    {
+      "name": "portfolio-api",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["server/index.js"],
+      "port": 3001
     }
   ]
 }

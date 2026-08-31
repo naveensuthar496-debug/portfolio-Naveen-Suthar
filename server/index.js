@@ -8,10 +8,12 @@
 import express from "express";
 import rateLimit from "express-rate-limit";
 import path from "node:path";
+import https from "node:https";
+import http from "node:http";
+import fs from "node:fs";
 
 import { config, mailConfigured, dbConfigured, ROOT } from "./config.js";
-import { connectDB, closeDB, isReady } from "./db.js";
-import Enquiry from "./models/Enquiry.js";
+import { connectDB, closeDB, isReady, getDatabase } from "./db.js";
 import { validateEnquiry, looksLikeSpam, BUDGETS } from "./validate.js";
 import { enqueue, startSweeper, stopSweeper, appendFallback } from "./queue.js";
 
@@ -76,7 +78,8 @@ app.post("/api/contact", limiter, async (req, res) => {
 
   if (!isReady()) {
     const saved = appendFallback({ ...record, createdAt: new Date().toISOString(), stored: "file" });
-    console.error("[contact] MongoDB unavailable — wrote to logs/enquiries.jsonl");
+    const dbType = config.databaseType === "mssql" ? "Azure SQL" : "MongoDB";
+    console.error(`[contact] ${dbType} unavailable — wrote to logs/enquiries.jsonl`);
     return res.status(saved ? 202 : 503).json({
       ok: saved,
       queued: saved,
@@ -89,7 +92,15 @@ app.post("/api/contact", limiter, async (req, res) => {
 
   let doc;
   try {
-    doc = await Enquiry.create(record);
+    const db = await getDatabase();
+
+    if (config.databaseType === "mssql") {
+      doc = await db.createEnquiry(record);
+    } else {
+      // MongoDB path - use Mongoose
+      const { default: Enquiry } = await import("./models/Enquiry.js");
+      doc = await Enquiry.create(record);
+    }
   } catch (err) {
     appendFallback({ ...record, createdAt: new Date().toISOString(), stored: "file", dbError: err.message });
     console.error(`[contact] save failed: ${err.message}`);
@@ -100,24 +111,30 @@ app.post("/api/contact", limiter, async (req, res) => {
     });
   }
 
-  console.log(`[contact] stored ${doc.ref} from ${doc.email}`);
+  const docRef = doc.ref || String(doc._id).slice(-6).toUpperCase();
+  console.log(`[contact] stored ${docRef} from ${doc.email}`);
 
   // 3. Notify out of band so the visitor isn't waiting on SMTP.
   enqueue(doc._id);
 
   return res.status(201).json({
     ok: true,
-    reference: doc.ref,
+    reference: docRef,
     message: "Thanks — your message landed. I'll reply within one business day.",
   });
 });
 
 /* ── health ──────────────────────────────────────────── */
 app.get("/api/health", (_req, res) => {
+  const dbType = config.databaseType === "mssql" ? "Azure SQL" : "MongoDB";
   res.json({
     ok: true,
     uptime: Math.round(process.uptime()),
-    db: { configured: dbConfigured(), connected: isReady() },
+    db: {
+      type: dbType,
+      configured: dbConfigured(),
+      connected: isReady()
+    },
     mail: { configured: mailConfigured(), to: config.mail.to },
     budgets: BUDGETS,
   });
@@ -134,12 +151,33 @@ app.use((err, _req, res, _next) => {
 });
 
 /* ── boot ────────────────────────────────────────────── */
-const server = app.listen(config.port, () => {
-  console.log(`\n  Portfolio server → http://localhost:${config.port}`);
-  console.log(`  Enquiries        → ${config.mail.to}`);
-  console.log(`  MongoDB          → ${dbConfigured() ? "configured" : "NOT configured (set MONGODB_URI)"}`);
-  console.log(`  SMTP             → ${mailConfigured() ? "configured" : "NOT configured (set SMTP_USER / SMTP_PASS)"}\n`);
-});
+let server;
+const protocol = process.env.USE_HTTPS === "true" ? "https" : "http";
+const certPath = process.env.SSL_CERT_PATH || path.join(ROOT, "server", "certs", "cert.pem");
+const keyPath = process.env.SSL_KEY_PATH || path.join(ROOT, "server", "certs", "key.pem");
+const dbType = config.databaseType === "mssql" ? "Azure SQL" : "MongoDB";
+
+// Try to use HTTPS if certificates are available or USE_HTTPS is explicitly set
+if (protocol === "https" && fs.existsSync(certPath) && fs.existsSync(keyPath)) {
+  const httpsOptions = {
+    cert: fs.readFileSync(certPath, "utf8"),
+    key: fs.readFileSync(keyPath, "utf8"),
+  };
+  server = https.createServer(httpsOptions, app).listen(config.port, () => {
+    console.log(`\n  Portfolio server → https://localhost:${config.port}`);
+    console.log(`  Enquiries        → ${config.mail.to}`);
+    console.log(`  Database         → ${dbType} (${dbConfigured() ? "configured" : "NOT configured"})`);
+    console.log(`  SMTP             → ${mailConfigured() ? "configured" : "NOT configured (set SMTP_USER / SMTP_PASS)"}`);
+    console.log(`  SSL Enabled      → Yes (${certPath})\n`);
+  });
+} else {
+  server = app.listen(config.port, () => {
+    console.log(`\n  Portfolio server → http://localhost:${config.port}`);
+    console.log(`  Enquiries        → ${config.mail.to}`);
+    console.log(`  Database         → ${dbType} (${dbConfigured() ? "configured" : "NOT configured"})`);
+    console.log(`  SMTP             → ${mailConfigured() ? "configured" : "NOT configured (set SMTP_USER / SMTP_PASS)"}\n`);
+  });
+}
 
 await connectDB();
 startSweeper();

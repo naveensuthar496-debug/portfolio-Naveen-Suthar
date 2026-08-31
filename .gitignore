@@ -4,11 +4,18 @@
 .env.*
 !.env.example
 
+# ── SSL certificates ────────────────────────────────────
+server/certs/
+*.pem
+*.key
+
 # ── dependencies / build ────────────────────────────────
 node_modules/
 npm-debug.log*
 yarn-error.log*
 pnpm-debug.log*
+build/
+dist/
 
 # ── runtime ─────────────────────────────────────────────
 logs/
@@ -19,3 +26,10 @@ Thumbs.db
 # ── local tooling ───────────────────────────────────────
 .skill-extract/
 *.zip
+.claude/
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+

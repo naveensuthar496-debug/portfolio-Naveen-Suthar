@@ -22,10 +22,27 @@ const int = (v, fallback) => {
 export const config = {
   env: process.env.NODE_ENV || "development",
   port: int(process.env.PORT, 3000),
+  useHttps: process.env.USE_HTTPS === "true" || false,
+
+  // ── SSL/TLS ───────────────────────────────────────────
+  ssl: {
+    certPath: process.env.SSL_CERT_PATH || "",
+    keyPath: process.env.SSL_KEY_PATH || "",
+  },
 
   // ── database ──────────────────────────────────────────
+  databaseType: (process.env.DATABASE_TYPE || "mongodb").toLowerCase(),
   mongoUri: process.env.MONGODB_URI || "",
   dbName: process.env.MONGODB_DB || "portfolio",
+
+  // ── Azure SQL ─────────────────────────────────────────
+  azureSql: {
+    server: process.env.AZURE_SQL_SERVER || "",
+    database: process.env.AZURE_SQL_DATABASE || "",
+    user: process.env.AZURE_SQL_USER || "",
+    password: process.env.AZURE_SQL_PASSWORD || "",
+    port: int(process.env.AZURE_SQL_PORT, 1433),
+  },
 
   // ── mail ──────────────────────────────────────────────
   mail: {
@@ -61,4 +78,10 @@ export const mailConfigured = () =>
   Boolean(config.mail.user && config.mail.pass && (config.mail.service || config.mail.host));
 
 /** Is a database configured? */
-export const dbConfigured = () => Boolean(config.mongoUri);
+export const dbConfigured = () => {
+  const dbType = config.databaseType;
+  if (dbType === "mssql") {
+    return Boolean(config.azureSql.server && config.azureSql.database && config.azureSql.user && config.azureSql.password);
+  }
+  return Boolean(config.mongoUri);
+};

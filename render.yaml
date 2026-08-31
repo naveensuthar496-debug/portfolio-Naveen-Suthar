@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: portfolio-app
+    env: docker
+    plan: free
+    branch: main
+    buildCommand: npm ci
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3000
+        sync: false

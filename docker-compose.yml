@@ -1,0 +1,52 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: development
+      PORT: 3000
+      USE_HTTPS: "false"
+      # MongoDB configuration (uncomment to use MongoDB)
+      # MONGODB_URI: mongodb://mongo:27017
+      # MONGODB_DB: portfolio
+      # Azure SQL configuration (uncomment to use Azure SQL)
+      # DATABASE_TYPE: mssql
+      # AZURE_SQL_SERVER: your-server.database.windows.net
+      # AZURE_SQL_DATABASE: portfolio
+      # AZURE_SQL_USER: youradmin
+      # AZURE_SQL_PASSWORD: your-password
+      # Email configuration
+      MAIL_TO: naveensuthar496@gmail.com
+      MAIL_SERVICE: gmail
+      SMTP_USER: ${SMTP_USER}
+      SMTP_PASS: ${SMTP_PASS}
+    volumes:
+      - ./logs:/app/logs
+      - ./server:/app/server
+      - ./index.html:/app/index.html
+    depends_on:
+      - mongo
+    networks:
+      - portfolio-network
+
+  # MongoDB service (optional - uncomment if using MongoDB)
+  mongo:
+    image: mongo:7-alpine
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_DB: portfolio
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - portfolio-network
+
+volumes:
+  mongo_data:
+
+networks:
+  portfolio-network:
+    driver: bridge
