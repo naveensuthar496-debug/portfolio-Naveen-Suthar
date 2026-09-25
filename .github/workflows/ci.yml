@@ -31,6 +31,7 @@ jobs:
       continue-on-error: true
 
     - name: Build Docker image
+      if: ${{ hashFiles('Dockerfile') != '' }}
       run: docker build -t portfolio-app:${{ github.sha }} .
 
     - name: Run tests
