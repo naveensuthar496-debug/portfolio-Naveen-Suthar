@@ -19,6 +19,7 @@
 :root{
   /* palette */
   --bg:#1c1d20;
+  --bg-soft:#26293a;
   --surface-lift:#24262b;      /* derived step of --bg, final CTA band */
   --surface-sink:#17181a;      /* derived step of --bg, footer         */
   --ink:#181818;
@@ -54,7 +55,10 @@
 html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
 
 body{
-  background:var(--bg);
+  background:
+    radial-gradient(circle at 15% -5%, rgba(69,92,233,.18), transparent 35%),
+    radial-gradient(circle at 85% 15%, rgba(192,192,192,.08), transparent 30%),
+    var(--bg);
   color:var(--text);
   font-family:var(--font);
   font-size:var(--body);
@@ -75,7 +79,22 @@ button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
   outline:2px solid var(--accent);
   outline-offset:3px;
   border-radius:var(--pill);
+  box-shadow:0 0 0 4px rgba(192,192,192,.12);
 }
+
+.skip-link{
+  position:fixed;
+  top:10px;
+  left:var(--s3);
+  z-index:100;
+  padding:10px 16px;
+  border-radius:var(--pill);
+  background:var(--accent);
+  color:#111111;
+  transform:translateY(-180%);
+  transition:transform 220ms var(--ease);
+}
+.skip-link:focus-visible{transform:translateY(0)}
 
 /* ── type scale ─────────────────────────────────────────── */
 h1,h2,h3{font-weight:450;line-height:1;letter-spacing:-.02em}
@@ -150,7 +169,8 @@ h1,h2,h3{font-weight:450;line-height:1;letter-spacing:-.02em}
             border-color var(--dur) var(--ease);
 }
 .site-head.is-stuck{
-  background:var(--bg);
+  background:rgba(28,29,32,.85);
+  backdrop-filter:blur(12px);
   border-bottom-color:var(--hairline);
 }
 
@@ -243,6 +263,15 @@ body.menu-open{overflow:hidden}
   display:flex;flex-direction:column;justify-content:flex-end;
   padding-top:140px;padding-bottom:var(--s8);
   position:relative;overflow:hidden;
+}
+.hero::before{
+  content:"";
+  position:absolute;
+  inset:14% -20% auto;
+  height:42%;
+  background:radial-gradient(closest-side, rgba(69,92,233,.16), transparent 75%);
+  pointer-events:none;
+  z-index:-1;
 }
 
 .hero-top{
@@ -386,6 +415,12 @@ body.menu-open{overflow:hidden}
   background:var(--card);
   aspect-ratio:4/3;
   isolation:isolate;
+  transition:transform 500ms var(--ease),box-shadow 500ms var(--ease);
+}
+.tile:hover,
+.tile:focus-visible{
+  transform:translateY(-6px);
+  box-shadow:0 24px 38px rgba(0,0,0,.28);
 }
 .tile-media{position:absolute;inset:0;overflow:hidden}
 .tile-media img{
@@ -421,6 +456,11 @@ body.menu-open{overflow:hidden}
 .tile:hover .tile-idx,
 .tile:focus-visible .tile-idx{opacity:1}
 
+@media (hover:none), (pointer:coarse){
+  .tile-meta{opacity:1;transform:none}
+  .tile-idx{opacity:1}
+}
+
 /*══════════════════════════════════════════════════════════
     5 — CAPABILITIES
   ══════════════════════════════════════════ */
@@ -442,8 +482,17 @@ body.menu-open{overflow:hidden}
 
 /*══════════════════════════════════════════════════════════
   6 — FEATURE ROWS
-  ══════════════════════════════════════════
-  gap:var(--s6);align-items:center;
+  ══════════════════════════════════════════ */
+.rows{
+  display:flex;
+  flex-direction:column;
+  gap:var(--s12);
+}
+.row{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:var(--s6);
+  align-items:center;
 }
 @media(min-width:768px){
   .row{grid-template-columns:repeat(2,1fr);gap:var(--s12)}
@@ -491,6 +540,7 @@ body.menu-open{overflow:hidden}
 .cta{background:var(--surface-lift)}
 .cta-inner{
   display:grid;grid-template-columns:1fr;gap:var(--s8);align-items:start;
+  padding-block:var(--s2);
 }
 @media(min-width:900px){
   .cta-inner{grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:var(--s12)}
@@ -511,6 +561,12 @@ body.menu-open{overflow:hidden}
 
 /* ── enquiry form ───────────────────────────────────────── */
 .form{display:flex;flex-direction:column;gap:var(--s3)}
+.form{
+  padding:var(--s4);
+  border:1px solid var(--hairline);
+  border-radius:28px;
+  background:rgba(17,17,17,.12);
+}
 .form-row{display:grid;grid-template-columns:1fr;gap:var(--s3)}
 @media(min-width:560px){.form-row{grid-template-columns:1fr 1fr}}
 
@@ -651,6 +707,7 @@ body.menu-open{overflow:hidden}
 </style>
 </head>
 <body>
+<a class="skip-link" href="#top">Skip to main content</a>
 
 <!-- ═══════════ 1 · HEADER ═══════════ -->
 <header class="site-head" id="head">
@@ -1192,6 +1249,4 @@ body.menu-open{overflow:hidden}
 </script>
 </body>
 </html>
-
-
 
